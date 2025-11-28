@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Shield, LayoutDashboard, ScanSearch, History, BookOpen, Settings, LogOut, Menu, X, Chrome } from "lucide-react";
+import { Shield, LayoutDashboard, ScanSearch, History, BookOpen, Settings, LogOut, Menu, X, Chrome, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -17,11 +17,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [demoMode, setDemoMode] = useState(false);
 
   const navigation = [
     { name: t('nav.dashboard'), href: "/dashboard", icon: LayoutDashboard },
     { name: t('nav.scanner'), href: "/scanner", icon: ScanSearch },
+    { name: "Social Media", href: "/social-media", icon: Share2 },
     { name: t('nav.history'), href: "/history", icon: History },
     { name: t('nav.safety'), href: "/safety-tips", icon: BookOpen },
     { name: "Extension", href: "/extension", icon: Chrome },
@@ -44,30 +44,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     }
   };
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
-
-  // load demo mode from localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('demoMode');
-      setDemoMode(saved === '1');
-    } catch (e) {
-      // ignore
-    }
-  }, []);
-
-  const toggleDemoMode = () => {
-    try {
-      const next = !demoMode;
-      setDemoMode(next);
-      localStorage.setItem('demoMode', next ? '1' : '0');
-    } catch (e) {
-      // ignore
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,18 +63,25 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.href;
+              const isSocialMedia = item.name === "Social Media";
+              
               return (
                 <Button
                   key={item.name}
                   variant={isActive ? "secondary" : "ghost"}
                   onClick={() => navigate(item.href)}
                   className={cn(
-                    "justify-start gap-2",
+                    "justify-start gap-2 relative",
                     isActive && "bg-secondary"
                   )}
                 >
                   <Icon className="h-4 w-4" />
                   {item.name}
+                  {isSocialMedia && (
+                    <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full px-1 py-0.5">
+                      New
+                    </span>
+                  )}
                 </Button>
               );
             })}
@@ -106,9 +92,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             >
               <LogOut className="h-4 w-4 mr-2" />
               Logout
-            </Button>
-            <Button variant={demoMode ? 'secondary' : 'ghost'} onClick={toggleDemoMode} className="ml-2">
-              {demoMode ? 'Demo ON' : 'Demo OFF'}
             </Button>
           </nav>
 
@@ -130,15 +113,22 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.href;
+                const isSocialMedia = item.name === "Social Media";
+                
                 return (
                   <Button
                     key={item.name}
                     variant={isActive ? "secondary" : "ghost"}
                     onClick={() => navigate(item.href)}
-                    className="w-full justify-start gap-2"
+                    className="w-full justify-start gap-2 relative"
                   >
                     <Icon className="h-4 w-4" />
                     {item.name}
+                    {isSocialMedia && (
+                      <span className="bg-green-500 text-white text-xs rounded-full px-2 py-0.5 ml-auto">
+                        New
+                      </span>
+                    )}
                   </Button>
                 );
               })}
