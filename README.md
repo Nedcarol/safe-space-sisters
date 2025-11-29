@@ -187,5 +187,5 @@ Built for the **16 Days of Activism Against Gender-Based Violence** campaign. Sa
 
 **For more information, see [PITCH.md](./PITCH.md) for the full demo script and project overview.**
 
-**View the wireframe [here] (https://app.visily.ai/projects/62ad83db-c2f3-4068-8fb9-d65e36b406f6/boards/2361343) **
+**View the wireframe [here](https://app.visily.ai/projects/62ad83db-c2f3-4068-8fb9-d65e36b406f6/boards/2361343) **
 
