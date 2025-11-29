@@ -48,7 +48,7 @@ Try the full functionality without API keys—perfect for testing and demonstrat
 
 ```bash
 # Clone the repository
-[git clone](https://github.com/Nedcarol/safe-space-sisters.git)
+git clone: https://github.com/Nedcarol/safe-space-sisters.git
 
 # Navigate to project directory
 cd safe-space-sisters
