@@ -13,7 +13,7 @@
 ## 🎬 Full Demo Script (2–3 minutes)
 
 ### Opening (10 seconds)
-"Let me show you Safe-Space Sisters — a tool designed to empower women and girls online. Imagine you receive a concerning message. You're not sure how serious it is, or how to respond. That's where we come in."
+"Let me show you Safe-Space Sisters https://www.canva.com/design/DAG5-l4rTLo/VXsCgVL4Zbb46KwbBaeOAw/edit?utm_content=DAG5-l4rTLo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton — a tool designed to empower women and girls online. Imagine you receive a concerning message. You're not sure how serious it is, or how to respond. That's where we come in."
 
 ### 1. Landing Page (20 seconds)
 *Click through the landing page, highlighting:*
