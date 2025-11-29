@@ -13,7 +13,7 @@
 ## 🎬 Full Demo Script (2–3 minutes)
 
 ### Opening (10 seconds)
-"Let me show you Safe-Space Sisters PITCH.md — a tool designed to empower women and girls online. Imagine you receive a concerning message. You're not sure how serious it is, or how to respond. That's where we come in."
+"Let me show you Safe-Space Sisters— a tool designed to empower women and girls online. Imagine you receive a concerning message. You're not sure how serious it is, or how to respond. That's where we come in."
 
 ### 1. Landing Page (20 seconds)
 *Click through the landing page, highlighting:*
