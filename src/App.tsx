@@ -13,6 +13,8 @@ import SafetyTips from "./pages/SafetyTips";
 import Settings from "./pages/Settings";
 import BrowserExtension from "./pages/BrowserExtension";
 import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { SocialMediaIntegration } from '@/components/SocialMediaIntegration';
 
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Auth />} />
             <Route path="/signup" element={<Auth />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/scanner" element={<Scanner />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />

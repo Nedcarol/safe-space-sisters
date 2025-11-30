@@ -2,6 +2,8 @@ import { Shield, Sparkles, Clock, Users, ArrowRight, CheckCircle2 } from "lucide
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { Footer } from "@/components/Footer";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -9,13 +11,14 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Shield className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">Safe-Space Sisters</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Button variant="ghost" onClick={() => navigate("/login")}>
               Login
             </Button>
@@ -31,7 +34,7 @@ const Landing = () => {
         <div className="container max-w-6xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary mb-6">
             <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">PowerHacks 2025: Build Safe. Build Bold.</span>
+            <span className="text-sm font-medium">AI-Powered Digital Safety</span>
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent-foreground bg-clip-text text-transparent">
@@ -148,12 +151,7 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t">
-        <div className="container text-center text-sm text-muted-foreground">
-          <p>© 2025 Safe-Space Sisters. Building safer digital spaces for women and girls.</p>
-          <p className="mt-2">Part of PowerHacks 2025: Build Safe. Build Bold.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
