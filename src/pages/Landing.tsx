@@ -9,9 +9,14 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-charcoal-dark via-charcoal-base to-charcoal-darker">
+    <div className="min-h-screen" style={{
+      background: 'radial-gradient(circle at center, #2E2541 0%, #191921 40%, #0E0E11 100%)'
+    }}>
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 border-b border-border/50" style={{
+        background: 'rgba(14, 14, 17, 0.95)',
+        backdropFilter: 'blur(10px)'
+      }}>
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Shield className="h-6 w-6 text-primary" />
@@ -19,10 +24,10 @@ const Landing = () => {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" onClick={() => navigate("/login")}>
+            <Button variant="ghost" onClick={() => navigate("/auth")}>
               Login
             </Button>
-            <Button onClick={() => navigate("/signup")}>
+            <Button onClick={() => navigate("/auth")} className="bg-primary hover:bg-primary/90">
               Get Started
             </Button>
           </div>
@@ -31,7 +36,7 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="py-20 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
         <div className="container max-w-6xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <Sparkles className="h-4 w-4 text-primary" />
@@ -227,7 +232,7 @@ const Landing = () => {
           <p className="text-xl mb-8 text-muted-foreground">
             Join thousands of women and girls taking control of their digital safety.
           </p>
-          <Button size="lg" onClick={() => navigate("/signup")} className="text-lg h-14 px-10 bg-primary hover:bg-primary/90 shadow-lg">
+          <Button size="lg" onClick={() => navigate("/auth")} className="text-lg h-14 px-10 bg-primary hover:bg-primary/90 shadow-lg">
             Create Free Account
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
