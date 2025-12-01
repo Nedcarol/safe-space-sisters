@@ -34,9 +34,9 @@ export const ThemeToggle = () => {
       className="transition-smooth"
     >
       {isDark ? (
-        <Sun className="h-5 w-5 text-foreground" />
+        <Sun className="h-5 w-5" style={{ color: '#FFFFFF' }} />
       ) : (
-        <Moon className="h-5 w-5 text-foreground" />
+        <Moon className="h-5 w-5" style={{ color: '#0E0E11' }} />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>
