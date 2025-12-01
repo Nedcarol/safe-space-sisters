@@ -31,12 +31,12 @@ export const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="transition-smooth"
+      className="transition-smooth hover:bg-muted"
     >
       {isDark ? (
         <Sun className="h-5 w-5" style={{ color: '#FFFFFF' }} />
       ) : (
-        <Moon className="h-5 w-5" style={{ color: '#0E0E11' }} />
+        <Moon className="h-5 w-5" style={{ color: '#6B7280' }} />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Footer } from "@/components/Footer";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -19,6 +20,27 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userId, setUserId] = useState<string>();
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useNotifications(userId);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+        
+        // Check if user is admin
+        const { data } = await supabase.rpc('has_role', {
+          _user_id: user.id,
+          _role: 'admin'
+        });
+        setIsAdmin(data || false);
+      }
+    };
+    getUser();
+  }, []);
 
   const navigation = [
     { name: t('nav.dashboard'), href: "/dashboard", icon: LayoutDashboard },
@@ -28,6 +50,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     { name: t('nav.safety'), href: "/safety-tips", icon: BookOpen },
     { name: "Extension", href: "/extension", icon: Chrome },
     { name: t('nav.settings'), href: "/settings", icon: Settings },
+    ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Shield }] : []),
   ];
 
   const handleLogout = async () => {
