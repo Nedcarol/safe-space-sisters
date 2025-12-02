@@ -18,6 +18,9 @@ import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { SocialMediaIntegration } from '@/components/SocialMediaIntegration';
 import Admin from "./pages/Admin";
+import FAQ from "./pages/FAQ";
+import Resources from "./pages/Resources";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +46,9 @@ const App = () => (
             <Route path="/extension" element={<ProtectedRoute><BrowserExtension /></ProtectedRoute>} />
             <Route path="/social-media" element={<ProtectedRoute><SocialMediaIntegration /></ProtectedRoute>} />
             <Route path="/safety-tips" element={<SafetyTips />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
