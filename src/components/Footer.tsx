@@ -94,14 +94,19 @@ export const Footer = () => {
             <h3 className="font-semibold text-foreground">Resources</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Documentation
-                </a>
+                <Link to="/faq" className="text-muted-foreground hover:text-foreground transition-colors">
+                  FAQ
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Support Center
-                </a>
+                <Link to="/resources" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Safety Resources
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Contact Us
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -111,11 +116,6 @@ export const Footer = () => {
               <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                   Terms of Service
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Community Guidelines
                 </a>
               </li>
             </ul>
