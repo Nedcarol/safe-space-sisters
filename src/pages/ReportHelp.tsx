@@ -85,6 +85,45 @@ const ReportHelp = () => {
     },
   ];
 
+  const kenyanSupportResources = [
+    {
+      name: "Kenya GBV Hotline",
+      phone: "1195 (Toll-Free)",
+      description: "National Gender-Based Violence Hotline by the Government of Kenya",
+      type: "Government",
+    },
+    {
+      name: "FIDA Kenya",
+      phone: "+254 20 271 0608",
+      description: "Free legal aid and advocacy for women's rights",
+      type: "Legal",
+    },
+    {
+      name: "COVAW Kenya",
+      phone: "+254 20 260 4890",
+      description: "Psychosocial support, legal aid, and safe shelter for GBV survivors",
+      type: "NGO",
+    },
+    {
+      name: "Childline Kenya",
+      phone: "116 (Toll-Free)",
+      description: "24/7 helpline for children and young people facing abuse",
+      type: "Youth",
+    },
+    {
+      name: "Kenya Red Cross GBV",
+      phone: "1199 (Toll-Free)",
+      description: "Emergency response and support for GBV survivors",
+      type: "Emergency",
+    },
+    {
+      name: "Wangu Kanja Foundation",
+      phone: "+254 722 178 177",
+      description: "Support for survivors of sexual violence",
+      type: "NGO",
+    },
+  ];
+
   const howWeHelp = [
     {
       title: "AI-Powered Detection",
@@ -169,9 +208,10 @@ const ReportHelp = () => {
 
           {/* Tabs Section */}
           <Tabs defaultValue="steps" className="mb-16">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="steps">Step-by-Step Guide</TabsTrigger>
-              <TabsTrigger value="resources">Support Resources</TabsTrigger>
+              <TabsTrigger value="resources">International Resources</TabsTrigger>
+              <TabsTrigger value="kenya">Kenyan Resources</TabsTrigger>
             </TabsList>
 
             <TabsContent value="steps" className="mt-6">
@@ -221,6 +261,36 @@ const ReportHelp = () => {
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">{resource.name}</CardTitle>
                         <Badge variant={resource.type === "Crisis" ? "destructive" : "secondary"}>
+                          {resource.type}
+                        </Badge>
+                      </div>
+                      <CardDescription>{resource.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center gap-2 text-lg font-semibold">
+                        <Phone className="h-5 w-5 text-primary" />
+                        {resource.phone}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="kenya" className="mt-6">
+              <div className="mb-4">
+                <Badge className="mb-2" variant="secondary">Kenya</Badge>
+                <p className="text-muted-foreground">
+                  Local organizations and government bodies supporting women and girls in Kenya.
+                </p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                {kenyanSupportResources.map((resource, index) => (
+                  <Card key={index} className="border-l-4 border-l-primary">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg">{resource.name}</CardTitle>
+                        <Badge variant={resource.type === "Government" ? "default" : resource.type === "Emergency" ? "destructive" : "secondary"}>
                           {resource.type}
                         </Badge>
                       </div>
