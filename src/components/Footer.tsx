@@ -109,6 +109,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/report-help" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Report & Get Help
+                </Link>
+              </li>
+              <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                   Privacy Policy
                 </a>
