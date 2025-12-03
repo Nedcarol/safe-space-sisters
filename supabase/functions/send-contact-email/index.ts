@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@3.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,73 +22,53 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    if (!RESEND_API_KEY) {
+      console.error("RESEND_API_KEY is not configured");
+      return new Response(
+        JSON.stringify({ error: "Email service not configured" }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const { name, email, subject, message }: ContactEmailRequest = await req.json();
 
     console.log("Sending contact email from:", email);
 
-    // Send confirmation email to user
-    const userEmailResponse = await resend.emails.send({
-      from: "Safe-Space Sisters <onboarding@resend.dev>",
-      to: [email],
-      subject: "We received your message!",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #333;">Thank you for contacting us, ${name}!</h1>
-          <p style="color: #666;">We have received your message and will get back to you as soon as possible.</p>
-          
-          <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h2 style="color: #333; margin-top: 0;">Your Message:</h2>
-            <p style="color: #666;"><strong>Subject:</strong> ${subject}</p>
-            <p style="color: #666;">${message}</p>
+    // Send confirmation email to user using fetch
+    const userEmailResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "Safe-Space Sisters <onboarding@resend.dev>",
+        to: [email],
+        subject: "We received your message!",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #333;">Thank you for contacting us, ${name}!</h1>
+            <p style="color: #666;">We have received your message and will get back to you as soon as possible.</p>
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <h2 style="color: #333; margin-top: 0;">Your Message:</h2>
+              <p style="color: #666;"><strong>Subject:</strong> ${subject}</p>
+              <p style="color: #666;">${message}</p>
+            </div>
+            <p style="color: #666;">We typically respond within 24-48 hours during business days.</p>
+            <p style="color: #666;">Best regards,<br>The Safe-Space Sisters Team</p>
           </div>
-          
-          <p style="color: #666;">
-            We typically respond within 24-48 hours during business days.
-          </p>
-          
-          <p style="color: #666;">
-            Best regards,<br>
-            The Safe-Space Sisters Team
-          </p>
-        </div>
-      `,
+        `,
+      }),
     });
 
-    // Send notification email to admin (you can change this to your admin email)
-    const adminEmailResponse = await resend.emails.send({
-      from: "Safe-Space Sisters <onboarding@resend.dev>",
-      to: ["onboarding@resend.dev"], // Replace with your admin email
-      subject: `New Contact Form Submission: ${subject}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #333;">New Contact Form Submission</h1>
-          
-          <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p style="color: #666;"><strong>From:</strong> ${name}</p>
-            <p style="color: #666;"><strong>Email:</strong> ${email}</p>
-            <p style="color: #666;"><strong>Subject:</strong> ${subject}</p>
-            <hr style="border: none; border-top: 1px solid #ddd; margin: 15px 0;">
-            <p style="color: #666;"><strong>Message:</strong></p>
-            <p style="color: #666;">${message}</p>
-          </div>
-        </div>
-      `,
-    });
-
-    console.log("Emails sent successfully:", { userEmailResponse, adminEmailResponse });
+    const userResult = await userEmailResponse.json();
+    console.log("Email sent successfully:", userResult);
 
     return new Response(
-      JSON.stringify({ 
-        success: true,
-        userEmail: userEmailResponse,
-        adminEmail: adminEmailResponse 
-      }), 
+      JSON.stringify({ success: true, ...userResult }),
       {
         status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          ...corsHeaders,
-        },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       }
     );
   } catch (error: any) {
