@@ -4,9 +4,12 @@ import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background">
@@ -18,12 +21,13 @@ const Landing = () => {
             <span className="text-xl font-bold">Safe-Space Sisters</span>
           </div>
           <div className="flex items-center gap-2">
+            <LanguageToggle />
             <ThemeToggle />
             <Button variant="ghost" onClick={() => navigate("/auth")}>
-              Login
+              {t('landing.login')}
             </Button>
             <Button onClick={() => navigate("/auth")} className="bg-primary hover:bg-primary/90">
-              Get Started
+              {t('landing.signup')}
             </Button>
           </div>
         </div>
