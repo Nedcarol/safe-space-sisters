@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, Sparkles, AlertTriangle, CheckCircle2, Loader2, BookOpen } from "lucide-react";
+import { Shield, Sparkles, AlertTriangle, CheckCircle2, Loader2, BookOpen, Eye, EyeOff, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 import { supabase } from "@/integrations/supabase/client";
 import AppLayout from "@/components/AppLayout";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AnalysisResult {
   toxicityScore: number;
@@ -19,11 +20,23 @@ interface AnalysisResult {
   severity: string;
   explanation: string;
   modelUsed?: string;
+  detectedLanguage?: string;
+  originalLanguage?: string;
 }
+
+// Common Sheng/Kenyan slang patterns for detection
+const shengPatterns = [
+  'poa', 'sawa', 'maze', 'fiti', 'niaje', 'mambo', 'vipi', 'buda', 'matha', 
+  'dem', 'manzi', 'mrembo', 'mbaya', 'mboch', 'wazi', 'rada', 'cheki', 
+  'jo', 'bro', 'beshte', 'mtu', 'wasee', 'songa', 'koroga', 'vibe',
+  'chapa', 'dunda', 'jaba', 'kawa', 'lamba', 'mbogi', 'nare', 'ocha',
+  'pombe', 'sheng', 'tao', 'weka', 'zile', 'chapaa', 'ngori', 'sudo'
+];
 
 const Scanner = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t, language } = useLanguage();
   const [text, setText] = useState("");
   const [model, setModel] = useState("gemini");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -33,16 +46,31 @@ const Scanner = () => {
   const [isGeneratingSafer, setIsGeneratingSafer] = useState(false);
   const [isGeneratingAdvice, setIsGeneratingAdvice] = useState(false);
   const [showDemoPanel, setShowDemoPanel] = useState(false);
+  const [hideContent, setHideContent] = useState(false);
+  const [detectedSheng, setDetectedSheng] = useState(false);
+
+  // Detect if text contains Sheng or other non-standard language
+  const detectLanguage = (inputText: string): { isSheng: boolean; detectedWords: string[] } => {
+    const words = inputText.toLowerCase().split(/\s+/);
+    const foundSheng = words.filter(word => 
+      shengPatterns.some(pattern => word.includes(pattern))
+    );
+    return { isSheng: foundSheng.length > 0, detectedWords: foundSheng };
+  };
 
   const handleAnalyze = async () => {
     if (!text.trim()) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Please enter some text to analyze",
+        title: language === 'sw' ? "Hitilafu" : "Error",
+        description: language === 'sw' ? "Tafadhali ingiza maandishi ya kuchanganua" : "Please enter some text to analyze",
       });
       return;
     }
+
+    // Check for Sheng/slang
+    const langCheck = detectLanguage(text);
+    setDetectedSheng(langCheck.isSheng);
 
     setIsAnalyzing(true);
     setAnalysis(null);
@@ -50,7 +78,12 @@ const Scanner = () => {
     setAdvice("");
 
     try {
-      const data = await api.analyzeToxicity(text, model);
+      // Add language hint for AI to handle Sheng/mixed languages
+      const analysisContext = langCheck.isSheng 
+        ? `[Note: This message may contain Sheng (Kenyan slang) or mixed language. Please analyze for toxicity regardless of language: "${text}"]`
+        : text;
+      
+      const data = await api.analyzeToxicity(analysisContext, model);
       // adapt legacy responses
       const normalized = {
         toxicityScore: (data.toxicityScore ?? data.toxicity_score ?? data.toxicity) || 0,
@@ -59,26 +92,29 @@ const Scanner = () => {
         severity: data.severity ?? 'low',
         explanation: data.explanation ?? data.reason ?? '',
         modelUsed: data.modelUsed ?? data.model_used ?? model,
+        detectedLanguage: langCheck.isSheng ? 'Sheng/Mixed' : 'English/Swahili',
       } as AnalysisResult;
 
       setAnalysis(normalized);
 
       if (normalized.toxicityScore > 30) {
         toast({
-          title: "Analysis Complete",
-          description: `Toxicity detected (${normalized.severity} severity)`,
+          title: language === 'sw' ? "Uchambuzi Umekamilika" : "Analysis Complete",
+          description: language === 'sw' 
+            ? `Sumu imegunduliwa (ukali wa ${normalized.severity})` 
+            : `Toxicity detected (${normalized.severity} severity)`,
         });
       } else {
         toast({
-          title: "Analysis Complete",
-          description: "Message appears safe",
+          title: language === 'sw' ? "Uchambuzi Umekamilika" : "Analysis Complete",
+          description: language === 'sw' ? "Ujumbe unaonekana salama" : "Message appears safe",
         });
       }
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Analysis Failed",
-        description: error.message || "Please try again",
+        title: language === 'sw' ? "Uchambuzi Umeshindikana" : "Analysis Failed",
+        description: error.message || (language === 'sw' ? "Tafadhali jaribu tena" : "Please try again"),
       });
     } finally {
       setIsAnalyzing(false);
@@ -286,23 +322,61 @@ const Scanner = () => {
 
         {analysis && (
           <div className="space-y-6">
+            {/* Sheng/Mixed Language Notice */}
+            {detectedSheng && (
+              <Card className="p-4 bg-blue-500/10 border-blue-500/20">
+                <div className="flex items-center gap-3">
+                  <Globe className="h-5 w-5 text-blue-500" />
+                  <div>
+                    <h3 className="font-semibold text-sm">
+                      {language === 'sw' ? 'Lugha Mchanganyiko Imegunduliwa' : 'Mixed Language Detected'}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {language === 'sw' 
+                        ? 'Ujumbe huu unaonekana una Sheng au lugha mchanganyiko. AI yetu inaweza kuchanganua ujumbe katika lugha yoyote.'
+                        : 'This message appears to contain Sheng or mixed language. Our AI can analyze messages in any language.'}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            )}
+
             {/* How it works: small explainer for demos */}
             <Card className="p-4 mb-4">
-              <h3 className="text-sm font-semibold mb-2">How it works</h3>
-              <p className="text-sm text-muted-foreground">Paste a message, click Analyze — our AI detects toxicity, highlights problematic words, suggests safer rewrites, and gives safety advice you can copy or save as evidence.</p>
+              <h3 className="text-sm font-semibold mb-2">
+                {language === 'sw' ? 'Jinsi Inavyofanya Kazi' : 'How it works'}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {language === 'sw' 
+                  ? 'Bandika ujumbe, bonyeza Changanuza — AI yetu inagundua sumu, inaonyesha maneno yenye matatizo, inapendekeza marekebisho salama, na kutoa ushauri wa usalama unaweza kunakili au kuhifadhi kama ushahidi.'
+                  : 'Paste a message, click Analyze — our AI detects toxicity, highlights problematic words, suggests safer rewrites, and gives safety advice you can copy or save as evidence.'}
+              </p>
             </Card>
+
             {/* Results Card */}
             <Card className="p-6 shadow-medium">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">Analysis Results</h2>
-                  <Badge className={getSeverityColor(analysis.severity)}>
-                    {analysis.severity.toUpperCase()} SEVERITY
-                  </Badge>
+                  <h2 className="text-2xl font-bold mb-2">
+                    {language === 'sw' ? 'Matokeo ya Uchambuzi' : 'Analysis Results'}
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <Badge className={getSeverityColor(analysis.severity)}>
+                      {analysis.severity.toUpperCase()} {language === 'sw' ? 'UKALI' : 'SEVERITY'}
+                    </Badge>
+                    {analysis.detectedLanguage && (
+                      <Badge variant="outline">
+                        <Globe className="h-3 w-3 mr-1" />
+                        {analysis.detectedLanguage}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-primary">{analysis.toxicityScore}</div>
-                  <div className="text-sm text-muted-foreground">Toxicity Score</div>
+                  <div className="text-sm text-muted-foreground">
+                    {language === 'sw' ? 'Alama ya Sumu' : 'Toxicity Score'}
+                  </div>
                 </div>
               </div>
 
@@ -312,10 +386,32 @@ const Scanner = () => {
                 </div>
               )}
 
-              {/* Show original text with highlighted problematic words */}
+              {/* Show original text with highlighted problematic words - with hide toggle */}
               <div className="mb-4">
-                <h3 className="text-sm font-semibold mb-2">Original Message (highlighted)</h3>
-                <div className="p-4 bg-background rounded-lg prose max-w-none">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-semibold">
+                    {language === 'sw' ? 'Ujumbe wa Awali (umeonyeshwa)' : 'Original Message (highlighted)'}
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setHideContent(!hideContent)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {hideContent ? (
+                      <>
+                        <Eye className="h-4 w-4 mr-1" />
+                        {language === 'sw' ? 'Onyesha' : 'Show'}
+                      </>
+                    ) : (
+                      <>
+                        <EyeOff className="h-4 w-4 mr-1" />
+                        {language === 'sw' ? 'Ficha' : 'Hide'}
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <div className={`p-4 bg-background rounded-lg prose max-w-none ${hideContent ? 'blur-md select-none' : ''}`}>
                   {analysis.highlightedWords.length === 0 ? (
                     <p className="whitespace-pre-wrap">{text}</p>
                   ) : (
@@ -337,7 +433,9 @@ const Scanner = () => {
 
               {analysis.categories.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="text-sm font-semibold mb-2">Detected Categories:</h3>
+                  <h3 className="text-sm font-semibold mb-2">
+                    {language === 'sw' ? 'Aina Zilizogunduliwa:' : 'Detected Categories:'}
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {analysis.categories.map((category) => (
                       <Badge key={category} variant="outline">
@@ -351,8 +449,10 @@ const Scanner = () => {
 
               {analysis.highlightedWords.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="text-sm font-semibold mb-2">Problematic Words/Phrases:</h3>
-                  <div className="flex flex-wrap gap-2">
+                  <h3 className="text-sm font-semibold mb-2">
+                    {language === 'sw' ? 'Maneno/Vifungu Vyenye Matatizo:' : 'Problematic Words/Phrases:'}
+                  </h3>
+                  <div className={`flex flex-wrap gap-2 ${hideContent ? 'blur-md select-none' : ''}`}>
                     {analysis.highlightedWords.map((word, idx) => (
                       <Badge key={idx} variant="destructive">
                         {word}
@@ -373,7 +473,7 @@ const Scanner = () => {
                   ) : (
                     <Sparkles className="mr-2 h-4 w-4" />
                   )}
-                  Rewrite Safely
+                  {language === 'sw' ? 'Andika Upya Kwa Usalama' : 'Rewrite Safely'}
                 </Button>
                 
                 <Button
@@ -386,7 +486,7 @@ const Scanner = () => {
                   ) : (
                     <BookOpen className="mr-2 h-4 w-4" />
                   )}
-                  Get Safety Advice
+                  {language === 'sw' ? 'Pata Ushauri wa Usalama' : 'Get Safety Advice'}
                 </Button>
                 
                 <Button
@@ -394,7 +494,7 @@ const Scanner = () => {
                   variant="outline"
                 >
                   <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Save to History
+                  {language === 'sw' ? 'Hifadhi kwenye Historia' : 'Save to History'}
                 </Button>
               </div>
             </Card>
