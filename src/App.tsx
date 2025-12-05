@@ -22,6 +22,7 @@ import FAQ from "./pages/FAQ";
 import Resources from "./pages/Resources";
 import Contact from "./pages/Contact";
 import ReportHelp from "./pages/ReportHelp";
+import DirectReport from "./pages/DirectReport";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/resources" element={<Resources />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/report-help" element={<ReportHelp />} />
+            <Route path="/direct-report" element={<DirectReport />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -114,6 +114,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/direct-report" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Report to Authorities
+                </Link>
+              </li>
+              <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                   Privacy Policy
                 </a>
